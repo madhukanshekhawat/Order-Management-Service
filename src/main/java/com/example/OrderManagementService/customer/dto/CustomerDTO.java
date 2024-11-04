@@ -12,14 +12,18 @@ public class CustomerDTO {
     private String lastName;
     private boolean isPremium;
     private LocalDateTime createdAt;
+    private String emailAddress;
+    private String address;
     private List<OrderDto> orders;
 
-    public CustomerDTO(int customerId, String firstName, String lastName, boolean isPremium, LocalDateTime createdAt) {
+    public CustomerDTO(int customerId, String firstName, String lastName, boolean isPremium, LocalDateTime createdAt, String emailAddress, String address) {
         this.customerId = customerId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.isPremium = isPremium;
         this.createdAt = createdAt;
+        this.emailAddress = emailAddress;
+        this.address = address;
     }
 
     public CustomerDTO() {
@@ -72,5 +76,21 @@ public class CustomerDTO {
 
     public void setOrderDtoList(List<OrderDto> orderDtoList) {
         this.orders = orderDtoList;
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

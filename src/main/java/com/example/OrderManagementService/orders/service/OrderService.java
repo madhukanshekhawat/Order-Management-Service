@@ -49,10 +49,12 @@ public class OrderService {
         Customer customer = customerRepository.findById(orderdto.getCustomerId())
                         .orElseThrow(() -> new ResourceNotFoundException(String.format("Customer not found with Id %d " + orderdto.getCustomerId())));
 
+        orders.setPriority(customer.isPremium());
         orders.setCustomer(customer);
         orderRepository.save(orders);
 
         OrderDto responseDto = new OrderDto();
+        responseDto.setCustomerId(customer.getCustomerId());
         BeanUtils.copyProperties(orders, responseDto);
         return responseDto;
     }

@@ -32,8 +32,11 @@ public class CustomerService {
         for(Customer customer : customers){
             CustomerDTO customerDTO = new CustomerDTO();
             customerDTO.setCustomerId(customer.getCustomerId());
-            customerDTO.setFirstName(customerDTO.getFirstName());
+            customerDTO.setFirstName(customer.getFirstName());
             customerDTO.setLastName(customer.getLastName());
+            customerDTO.setEmailAddress(customer.getEmailAddress());
+            customerDTO.setAddress(customer.getAddress());
+            customerDTO.setCreatedAt(customer.getCreatedAt());
             customer.setPremium(customer.isPremium());
 
             List<OrderDto> orderDtos = customer.getOrders().stream()
@@ -42,8 +45,8 @@ public class CustomerService {
                         orderDto.setOrderId(orders.getOrderId());
                         orderDto.setDeliveryAddress(orders.getDeliveryAddress());
                         orderDto.setWareHouseDistance(orders.getWareHouseDistance());
-                        orderDto.setPriority(orders.isPriority());
                         orderDto.setPlacedTime(orders.getPlacedTime());
+                        orderDto.setCustomerId(customer.getCustomerId());
                         orderDto.setDelivered(orderDto.isDelivered());
                         return orderDto;
                     })
@@ -71,10 +74,6 @@ public class CustomerService {
         BeanUtils.copyProperties(customerDTO, customer);
         customer.setCreatedAt(LocalDateTime.now());
         customer.setUpdatedAt(LocalDateTime.now());
-
-        if(customerDTO.isPremium()){
-            customer.getOrders().forEach(orders -> orders.setPriority(true));
-        }
 
         customerRepository.save(customer);
 

@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 public class OrderDto {
 
     private int orderId;
-    private boolean priority;
     private LocalDateTime placedTime;
     private String deliveryAddress;
     private double wareHouseDistance;
@@ -18,14 +17,6 @@ public class OrderDto {
 
     public void setOrderId(int orderId) {
         this.orderId = orderId;
-    }
-
-    public boolean isPriority() {
-        return priority;
-    }
-
-    public void setPriority(boolean priority) {
-        this.priority = priority;
     }
 
     public LocalDateTime getPlacedTime() {
