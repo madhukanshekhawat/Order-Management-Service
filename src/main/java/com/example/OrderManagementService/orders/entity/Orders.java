@@ -24,7 +24,6 @@ public class Orders {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
-//    @JsonIgnore
     @JsonBackReference
     private Customer customer;
 

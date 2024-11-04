@@ -1,8 +1,6 @@
 package com.example.OrderManagementService.customer.entity;
 
 import com.example.OrderManagementService.orders.entity.Orders;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
@@ -26,7 +24,6 @@ public class Customer {
     private String address;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-//    @JsonIgnore
     @JsonManagedReference
     private List<Orders> orders;
 
@@ -79,7 +76,7 @@ public class Customer {
         this.lastName = lastName;
     }
 
-    public boolean isPremium(boolean b) {
+    public boolean isPremium() {
         return isPremium;
     }
 

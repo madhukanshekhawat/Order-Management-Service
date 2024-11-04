@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Repository
 public interface OrderRepository extends JpaRepository<Orders, Integer> {
 
     @Query("SELECT o FROM Orders o WHERE o.isDelivered = false ORDER BY o.wareHouseDistance ASC, o.priority DESC, o.placedTime ASC")

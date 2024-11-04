@@ -1,12 +1,18 @@
 package com.example.OrderManagementService.customer.service;
 
+import com.example.OrderManagementService.ResourceNotFoundException;
+import com.example.OrderManagementService.customer.dto.CustomerDTO;
 import com.example.OrderManagementService.customer.entity.Customer;
 import com.example.OrderManagementService.customer.repository.CustomerRepository;
+import com.example.OrderManagementService.orders.dto.OrderDto;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CustomerService {
@@ -18,18 +24,69 @@ public class CustomerService {
         this.customerRepository = customerRepository;
     }
 
-    public List<Customer> getAll(){
-        return customerRepository.findAll();
+    public List<CustomerDTO> getAll(){
+        List<Customer> customers = customerRepository.findAll();
+
+        List<CustomerDTO> customerDTOS = new ArrayList<>();
+
+        for(Customer customer : customers){
+            CustomerDTO customerDTO = new CustomerDTO();
+            customerDTO.setCustomerId(customer.getCustomerId());
+            customerDTO.setFirstName(customerDTO.getFirstName());
+            customerDTO.setLastName(customer.getLastName());
+            customer.setPremium(customer.isPremium());
+
+            List<OrderDto> orderDtos = customer.getOrders().stream()
+                    .map(orders -> {
+                        OrderDto orderDto = new OrderDto();
+                        orderDto.setOrderId(orders.getOrderId());
+                        orderDto.setDeliveryAddress(orders.getDeliveryAddress());
+                        orderDto.setWareHouseDistance(orders.getWareHouseDistance());
+                        orderDto.setPriority(orders.isPriority());
+                        orderDto.setPlacedTime(orders.getPlacedTime());
+                        orderDto.setDelivered(orderDto.isDelivered());
+                        return orderDto;
+                    })
+                    .collect(Collectors.toList());
+            customerDTO.setOrderDtoList(orderDtos);
+            customerDTOS.add(customerDTO);
+
+        }
+        return customerDTOS;
     }
 
-    public Customer add(Customer customer){
+    private CustomerDTO toCustomerDTO(Customer customer) {
+        CustomerDTO response = new CustomerDTO();
+        response.setCustomerId(customer.getCustomerId());
+        response.setFirstName(customer.getFirstName());
+        response.setLastName(customer.getLastName());
+        response.setPremium(customer.isPremium());
+        response.setCreatedAt(customer.getCreatedAt());
+        return response;
+    }
 
-        if(customer.getOrders() != null && customer.getOrders().size() >= 1){
-            customer.setPremium(true);
-        } else {
-            customer.setPremium(false);
+    public CustomerDTO add(CustomerDTO customerDTO){
+
+        Customer customer = new Customer();
+        BeanUtils.copyProperties(customerDTO, customer);
+        customer.setCreatedAt(LocalDateTime.now());
+        customer.setUpdatedAt(LocalDateTime.now());
+
+        if(customerDTO.isPremium()){
+            customer.getOrders().forEach(orders -> orders.setPriority(true));
         }
-        return customerRepository.save(customer);
+
+        customerRepository.save(customer);
+
+        CustomerDTO responseDTO = new CustomerDTO();
+        BeanUtils.copyProperties(customer , responseDTO);
+        return responseDTO;
+
+//        if(customer.getOrders() != null && customer.getOrders().size() >= 1){
+//            customer.setPremium(true);
+//        } else {
+//            customer.setPremium(false);
+//        }
     }
 
     public void delete(int id) {
@@ -43,6 +100,11 @@ public class CustomerService {
             customer.setEmailAddress(updated.getEmailAddress());
             customer.setAddress(updated.getAddress());
             return customerRepository.save(customer);
-        }).orElseThrow(() -> new RuntimeException("Customer with Id" + Id + "not found"));
+        }).orElseThrow(() -> new ResourceNotFoundException(String.format("Customer with Id %d not found", Id)));
+    }
+
+    public Customer getById(int id) {
+        return customerRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Customer with Id %d not found", id)));
     }
 }
