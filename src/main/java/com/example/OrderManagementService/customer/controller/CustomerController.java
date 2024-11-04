@@ -29,8 +29,8 @@ public class CustomerController {
 
     @PostMapping
     public ResponseEntity<CustomerDTO> add(@RequestBody CustomerDTO customerDTO){
-        CustomerDTO saved = customerService.add(customerDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+        CustomerDTO savedCustomer = customerService.add(customerDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedCustomer);
     }
 
     @DeleteMapping("/{id}")
@@ -39,12 +39,14 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public Customer getById(@PathVariable int id){
-        return customerService.getById(id);
+    public ResponseEntity<CustomerDTO> getById(@PathVariable int id){
+        CustomerDTO customerDTO = customerService.getById(id);
+        return ResponseEntity.ok(customerDTO);
     }
 
     @PutMapping("/{id}")
-    public Customer update(@PathVariable int id, @RequestBody Customer updated){
-        return customerService.update(id,updated);
+    public ResponseEntity<CustomerDTO> updateCustomerRequest(@PathVariable int id, @RequestBody Customer updated){
+        CustomerDTO customerDTO = customerService.update(id,updated);
+        return ResponseEntity.ok(customerDTO);
     }
 }

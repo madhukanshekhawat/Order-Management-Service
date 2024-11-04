@@ -30,6 +30,14 @@ public class CustomerDTO {
 
     }
 
+    public CustomerDTO(int customerId, String firstName, String lastName, boolean premium, String emailAddress) {
+        this.customerId = customerId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.isPremium = premium;
+        this.emailAddress = emailAddress;
+    }
+
     public int getCustomerId() {
         return customerId;
     }

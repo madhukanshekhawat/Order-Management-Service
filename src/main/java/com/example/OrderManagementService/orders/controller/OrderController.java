@@ -2,6 +2,7 @@ package com.example.OrderManagementService.orders.controller;
 
 import com.example.OrderManagementService.ResourceNotFoundException;
 import com.example.OrderManagementService.orders.dto.OrderDto;
+import com.example.OrderManagementService.orders.dto.OrderResponse;
 import com.example.OrderManagementService.orders.entity.Orders;
 import com.example.OrderManagementService.orders.service.OrderService;
 import jakarta.persistence.criteria.Order;
@@ -26,9 +27,9 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderDto>  add(@RequestBody OrderDto orderDto){
-        OrderDto saved = orderService.add(orderDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+    public ResponseEntity<OrderDto> addOrderRequest(@RequestBody OrderDto orderDto){
+        OrderDto savedOrder = orderService.add(orderDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedOrder);
     }
 
     @GetMapping("/{id}")
@@ -48,8 +49,9 @@ public class OrderController {
     }
 
     @PutMapping("/delivered/{id}")
-    public void markOrdersAsDelivered(@PathVariable int id){
-        orderService.markOrderAsDelivered(id);
+    public ResponseEntity<OrderResponse> markOrdersAsDelivered(@PathVariable int id){
+        OrderResponse response = orderService.markOrderAsDelivered(id);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")

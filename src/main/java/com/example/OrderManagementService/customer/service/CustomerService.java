@@ -58,16 +58,6 @@ public class CustomerService {
         return customerDTOS;
     }
 
-    private CustomerDTO toCustomerDTO(Customer customer) {
-        CustomerDTO response = new CustomerDTO();
-        response.setCustomerId(customer.getCustomerId());
-        response.setFirstName(customer.getFirstName());
-        response.setLastName(customer.getLastName());
-        response.setPremium(customer.isPremium());
-        response.setCreatedAt(customer.getCreatedAt());
-        return response;
-    }
-
     public CustomerDTO add(CustomerDTO customerDTO){
 
         Customer customer = new Customer();
@@ -80,30 +70,45 @@ public class CustomerService {
         CustomerDTO responseDTO = new CustomerDTO();
         BeanUtils.copyProperties(customer , responseDTO);
         return responseDTO;
-
-//        if(customer.getOrders() != null && customer.getOrders().size() >= 1){
-//            customer.setPremium(true);
-//        } else {
-//            customer.setPremium(false);
-//        }
     }
 
     public void delete(int id) {
         customerRepository.deleteById(id);
     }
 
-    public Customer update(int Id, Customer updated){
-        return customerRepository.findById(Id).map(customer -> {
-            customer.setFirstName(updated.getFirstName());
-            customer.setLastName(updated.getLastName());
-            customer.setEmailAddress(updated.getEmailAddress());
-            customer.setAddress(updated.getAddress());
-            return customerRepository.save(customer);
-        }).orElseThrow(() -> new ResourceNotFoundException(String.format("Customer with Id %d not found", Id)));
+    public CustomerDTO update(int customerId, Customer updatedCustomer) {
+        Customer existingCustomer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Customer with ID %d not found", customerId)));
+        existingCustomer.setFirstName(updatedCustomer.getFirstName());
+        existingCustomer.setLastName(updatedCustomer.getLastName());
+        existingCustomer.setEmailAddress(updatedCustomer.getEmailAddress());
+        existingCustomer.setPremium(updatedCustomer.isPremium());
+        existingCustomer.setUpdatedAt(LocalDateTime.now());
+
+        Customer savedCustomer = customerRepository.save(existingCustomer);
+
+        return new CustomerDTO(
+                savedCustomer.getCustomerId(),
+                savedCustomer.getFirstName(),
+                savedCustomer.getLastName(),
+                savedCustomer.isPremium(),
+                savedCustomer.getEmailAddress()
+        );
     }
 
-    public Customer getById(int id) {
-        return customerRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Customer with Id %d not found", id)));
+    public CustomerDTO getById(int id) {
+       Customer customer = customerRepository.findById(id)
+               .orElseThrow( ()-> new ResourceNotFoundException(String.format("Customer with Id %d not found",id)));
+
+       return new CustomerDTO(
+               customer.getCustomerId(),
+               customer.getFirstName(),
+               customer.getLastName(),
+               customer.isPremium(),
+               customer.getEmailAddress()
+       );
+
     }
 }
+
+

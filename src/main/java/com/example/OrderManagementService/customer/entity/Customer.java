@@ -14,7 +14,6 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int customerId;
 
-    @Column(name = "FirstName")
     private String firstName;
     private String lastName;
     private boolean isPremium;

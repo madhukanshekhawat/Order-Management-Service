@@ -4,6 +4,7 @@ import com.example.OrderManagementService.ResourceNotFoundException;
 import com.example.OrderManagementService.customer.entity.Customer;
 import com.example.OrderManagementService.customer.repository.CustomerRepository;
 import com.example.OrderManagementService.orders.dto.OrderDto;
+import com.example.OrderManagementService.orders.dto.OrderResponse;
 import com.example.OrderManagementService.orders.entity.Orders;
 import com.example.OrderManagementService.orders.repository.OrderRepository;
 import org.aspectj.weaver.ast.Or;
@@ -32,11 +33,13 @@ public class OrderService {
         return orderRepository.findByIsDeliveredTrueAndPlacedTimeBetween(date.atStartOfDay(),date.plusDays(1).atStartOfDay());
     }
 
-    public void markOrderAsDelivered(int orderId){
+    public OrderResponse markOrderAsDelivered(int orderId){
         Orders orders = orderRepository.findById(orderId).orElseThrow(() -> new ResourceNotFoundException(String.format("order with ID %d not found",orderId)));
         orders.setDelivered(true);
         orders.setUpdatedTime(LocalDateTime.now());
         orderRepository.save(orders);
+        String message = String.format("Order Id %d has been marked as delivered" , orderId);
+        return new OrderResponse(orderId, true, message);
     }
 
     public OrderDto add(OrderDto orderdto) {
